@@ -12,7 +12,9 @@
 
 > 从易于捕捉的单目视频中重建高保真、可动画化的3D头部虚拟形象是一个至关重要但极具挑战性的任务。尽管在渲染性能和表现力方面已经取得了显著进展，但仍面临诸多挑战，包括不完整的重建和低效的高斯表示。为了解决这些问题，我们提出了FATE——一种从单目视频重建可编辑的，完整的3D人头的方法。FATE结合了一种基于采样的致密化策略，确保点的最佳位置分布，从而提高渲染效率。我们还引入了一种神经烘焙技术，将离散的高斯表示转化为连续的属性图，从而实现直观的外观编辑。此外，我们提出了一个通用的补全框架，以恢复非正面外观，最终实现完整的3D头部虚拟形象。FATE在定性和定量评估中均优于以往的方法，达到了当前最先进的性能。据我们所知，FATE是首个可驱动并支持360°重建的从单目视频中重建3D人头的重建方法。
 
-![](../assets/teaser.jpg)
+<div align=center>
+  <img src="./assets/teaser.jpg">
+</div>
 
 ## 安装
 
@@ -264,15 +266,21 @@ python avatar_gui.py \
 
 #### 全头补全
 
-![](../assets/render.gif)
+<div align=center>
+  <img src="./assets/render.gif">
+</div>
 
 #### 贴图编辑
 
-![](../assets/lty.gif)
+<div align=center>
+  <img src="./assets/lty.gif">
+</div>
 
 #### 风格迁移
 
-![](../assets/the_wave.gif)
+<div align=center>
+  <img src="./assets/the_wave.gif">
+</div>
 
 ## 致谢
 

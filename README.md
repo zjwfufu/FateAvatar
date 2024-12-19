@@ -12,9 +12,9 @@ Code for "FATE: Full-head Gaussian Avatar with Textural Editing from Monocular V
 
 > Reconstructing high-fidelity, animatable 3D head avatars from effortlessly captured monocular videos is a pivotal yet formidable challenge. Although significant progress has been made in rendering performance and manipulation capabilities, notable challenges remain, including incomplete reconstruction and inefficient Gaussian representation. To address these challenges, we introduce FATE — a novel method for reconstructing an editable full-head avatar from a single monocular video.  FATE integrates a sampling-based densification strategy to ensure optimal positional distribution of points, improving rendering efficiency.  A neural baking technique is introduced to convert discrete Gaussian representations into continuous attribute maps, facilitating intuitive appearance editing.  Furthermore, we propose a universal completion framework to recover non-frontal appearance, culminating in a 360$^\circ$-renderable 3D head avatar. FATE outperforms previous approaches in both qualitative and quantitative evaluations, achieving state-of-the-art performance.  To the best of our knowledge, FATE is the first animatable and 360$^\circ$ full-head monocular reconstruction method for a 3D head avatar.
 
-<center>
-  ![](./assets/teaser.jpg)
-</center>
+<div align=center>
+  <img src="./assets/teaser.jpg">
+</div>
 
 ## Installation
 
@@ -266,21 +266,22 @@ python avatar_gui.py \
 
 #### Full-head completion
 
-<center>
-  ![](./assets/render.gif)
-</center>
+<div align=center>
+  <img src="./assets/render.gif">
+</div>
 
 #### Sticker editing
 
-<center>
-  ![](./assets/lty.gif)
-</center>
+<div align=center>
+  <img src="./assets/lty.gif">
+</div>
 
 #### Style transfer
 
-<center>
-  ![](./assets/the_wave.gif)
-</center>
+<div align=center>
+  <img src="./assets/the_wave.gif">
+</div>
+
 
 ## Acknowledgement
 

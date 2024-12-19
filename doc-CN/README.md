@@ -111,9 +111,9 @@
 
 ```
 python train_mono_avatar.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
-	--root_path <DATASET_PATH> \
+    --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
     [--resume]
@@ -147,7 +147,7 @@ python train_mono_avatar.py \
 
 ```
 python train_generate_pseudo.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
@@ -157,9 +157,9 @@ python train_generate_pseudo.py \
 
 ```
 python train_full_avatar.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
-	--root_path <DATASET_PATH> \
+    --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
 ```
@@ -168,7 +168,7 @@ python train_full_avatar.py \
 
 ```
 python train_neural_baking.py \
-	--config <CONFIG_PATH> \ 
+    --config <CONFIG_PATH> \ 
     --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
@@ -208,7 +208,7 @@ python train_neural_baking.py --config $CONFIG_PATH --root_path $DATASET_PATH \
 
 ```
 python avatar_edit_baked.py \
-	--config <CONFIG_PATH> \ 
+    --config <CONFIG_PATH> \ 
     --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
@@ -223,9 +223,9 @@ python avatar_edit_baked.py \
 
 ```
 python avatar_reenact.py \
-	--config <CONFIG_PATH> \
-	--model_name <MODEL_NAME> \
-	--dst_path <DATASET_PATH> \
+    --config <CONFIG_PATH> \
+    --model_name <MODEL_NAME> \
+    --dst_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
 ```

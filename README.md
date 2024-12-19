@@ -109,9 +109,9 @@ Train the head avatar from monocular video using the following command:
 
 ```
 python train_mono_avatar.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
-	--root_path <DATASET_PATH> \
+    --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
     [--resume]
@@ -145,7 +145,7 @@ Generate pseudo data from the completion framework using the following command:
 
 ```
 python train_generate_pseudo.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
@@ -155,9 +155,9 @@ Complete the head avatar obtained from the monocular video using the following c
 
 ```
 python train_full_avatar.py \
-	--model_name <MODEL_NAME> \
+    --model_name <MODEL_NAME> \
     --config <CONFIG_PATH> \ 
-	--root_path <DATASET_PATH> \
+    --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME>
 ```
@@ -166,7 +166,7 @@ Perform neural baking on the trained head avatar using the following command:
 
 ```
 python train_neural_baking.py \
-	--config <CONFIG_PATH> \ 
+    --config <CONFIG_PATH> \ 
     --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
@@ -206,7 +206,7 @@ For the baked avatar, we provide a script for textural editing. You can also cus
 
 ```
 python avatar_edit_baked.py \
-	--config <CONFIG_PATH> \ 
+    --config <CONFIG_PATH> \ 
     --root_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
@@ -221,9 +221,9 @@ We also provide a script for cross-reenactment:
 
 ```
 python avatar_reenact.py \
-	--config <CONFIG_PATH> \
-	--model_name <MODEL_NAME> \
-	--dst_path <DATASET_PATH> \
+    --config <CONFIG_PATH> \
+    --model_name <MODEL_NAME> \
+    --dst_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
 ```

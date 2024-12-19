@@ -1,0 +1,51 @@
+dataset:
+  use_mean_expression: True
+  use_var_expression: True
+  canonical_pose: 0.2
+  use_background: False
+  load_images: True
+  img_res: [512, 512]
+  train:
+    subsample: 1
+  test:
+    subsample: 1
+
+loss:
+  threshold_scale:  0.6
+  threshold_xyz:    1.0
+  weight:
+    rgb_loss:   0.8
+    dssim_loss: 0.2
+    scale_loss: 1.0
+    xyz_loss:   0.01
+
+model:
+  sh_degree: 3
+
+training:
+  feature_dc_lr:      0.0025
+  opacity_lr:         0.05
+  scaling_lr:         0.017 # scaled up according to mean triangle scale
+  rotation_lr:        0.001
+  # position lr, scaled up according to mean triangle scale
+  position_lr_init:   0.005
+  position_lr_final:  0.00005
+  position_lr_delay_mult: 0.01
+  position_lr_max_steps:  600000
+  # gaussian maintainer
+  densify_from_iter:        10000
+  densify_interval:         2000
+  densify_until_iter:       600000
+  opacity_reset_start_iter: 0
+  opacity_reset_interval:   60000
+  size_threshold:           20
+  densify_grad_threshold:   0.0001
+  min_opacity:              0.005
+  # optimize flame coefficients in imavatar dataset
+  tracking_lr: 0.0005
+  epochs:
+    imavatar: 50
+    insta: 10
+    4dface: 10
+    finetune: 50  # for imavatar dataset
+

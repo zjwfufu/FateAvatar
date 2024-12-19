@@ -1,0 +1,34 @@
+dataset:
+  use_mean_expression: True
+  use_var_expression: True
+  canonical_pose: 0.2
+  use_background: False
+  load_images: True
+  img_res: [512, 512]
+  train:
+    subsample: 1
+  test:
+    subsample: 1
+
+loss:
+  weight:
+    huber_loss: 1.0
+    lpips_loss: 0.05
+
+model:
+  tex_size: 128
+
+training:
+  feature_dc_lr:      0.0025
+  opacity_lr:         0.05
+  scaling_lr:         0.005
+  rotation_lr:        0.001
+  deformer_lr:        0.0001
+  # optimize flame coefficients in imavatar dataset
+  tracking_lr: 0.0005
+  epochs:
+    imavatar: 50
+    insta: 20
+    4dface: 10
+    finetune: 50  # for imavatar and 4dface dataset
+

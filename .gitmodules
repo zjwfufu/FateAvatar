@@ -1,0 +1,18 @@
+[submodule "submodules/3DDFA_V2"]
+	path = submodules/3DDFA_V2
+	url = https://github.com/cleardusk/3DDFA_V2.git
+[submodule "submodules/GFPGAN"]
+	path = submodules/GFPGAN
+	url = https://github.com/TencentARC/GFPGAN.git
+[submodule "submodules/MODNet"]
+	path = submodules/MODNet
+	url = https://github.com/ZHKKKe/MODNet.git
+[submodule "submodules/SphereHead"]
+	path = submodules/SphereHead
+	url = https://github.com/lhyfst/SphereHead.git
+[submodule "submodules/face-parsing.PyTorch"]
+	path = submodules/face-parsing.PyTorch
+	url = https://github.com/zllrunning/face-parsing.PyTorch.git
+[submodule "submodules/nvdiffrast"]
+	path = submodules/nvdiffrast
+	url = https://github.com/NVlabs/nvdiffrast.git

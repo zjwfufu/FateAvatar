@@ -53,6 +53,11 @@ For compatibility reasons, we recommend running this repository in Linux. Instal
   cd submodules/3DDFA_V2
   bash build.sh	# you may need install manually in Win10
   cd ..
+
+  # for rendering mesh
+  cd submodules/nvdiffrast
+  pip install .
+  cd ..
   
   # for monogaussianavatar baseline
   pip install functorch==0.2.0
@@ -70,7 +75,7 @@ For compatibility reasons, we recommend running this repository in Linux. Instal
   | Model                        | Links                                                        |
   | ---------------------------- | ------------------------------------------------------------ |
   | FLAME2020                    | [generic_model.pkl](https://flame.is.tue.mpg.de/)            |
-  | SphereHead                   | [spherehead-ckpt-025000.pkl](https://cuhko365-my.sharepoint.com/personal/223010106_link_cuhk_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F223010106%5Flink%5Fcuhk%5Fedu%5Fcn%2FDocuments%2FRelease%2FECCV24%5FSphereHead%2FSphereHead%5Fmodel%5Frelease%2Fspherehead%2Dckpt%2D025000%2Epkl&parent=%2Fpersonal%2F223010106%5Flink%5Fcuhk%5Fedu%5Fcn%2FDocuments%2FRelease%2FECCV24%5FSphereHead%2FSphereHead%5Fmodel%5Frelease&ga=1) |
+  | SphereHead                   | [spherehead-ckpt-025000.pkl](https://cuhko365-my.sharepoint.com/:u:/g/personal/223010106_link_cuhk_edu_cn/EUU4STpe1p5HhLKIYgxuN6YBWNxVKac0WCXzoDLSJPn4RA?e=pOyGkK) |
   | GFPGAN1.3                    | [GFPGANv1.3.pth](https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth) |
   | VGG16 for Perpetual Loss     | [vgg16.pt](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt) |
   | Landmark Detection from Dlib | [shape_predictor_68_face_landmarks.dat](https://github.com/italojs/facial-landmarks-recognition/blob/master/shape_predictor_68_face_landmarks.dat) |

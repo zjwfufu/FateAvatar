@@ -85,7 +85,7 @@ For compatibility reasons, we recommend running this repository in Linux. Instal
 
 ## Data
 
-We support datasets from both [IMAvatar](https://github.com/zhengyuf/IMavatar) and [INSTA](https://github.com/Zielon/INSTA) preprocessing pipelines. For the layout of the IMAvatar dataset, please refer to [here](https://github.com/zjwfufu/FateAvatar/blob/b39642aa34e451350eba85996dc0735192c5473e/train/dataset.py#L127), and for the layout of the INSTA dataset, please refer to [here](https://github.com/zjwfufu/FateAvatar/blob/b39642aa34e451350eba85996dc0735192c5473e/train/dataset.py#L336). The `./data` folder should have the following structure:
+We support datasets from both [IMAvatar](https://github.com/zhengyuf/IMavatar) and [INSTA](https://github.com/Zielon/INSTA) preprocessing pipelines. For the layout of the IMAvatar dataset, please refer to [here](https://github.com/zjwfufu/FateAvatar/blob/130e3d00e4f8d6d512c792d141f109cb6f5d5da2/train/dataset.py#L127), and for the layout of the INSTA dataset, please refer to [here](https://github.com/zjwfufu/FateAvatar/blob/130e3d00e4f8d6d512c792d141f109cb6f5d5da2/train/dataset.py#L336). The `./data` folder should have the following structure:
 
 ```
 .

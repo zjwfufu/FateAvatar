@@ -272,6 +272,96 @@ class SplattingAvatar(nn.Module):
         output = self.forward(input)
         return output
     
+    @torch.no_grad()
+    def inference(self, input):
+        cam_pose = input["cam_pose"].clone()
+        fovx = input["fovx"][0]
+        fovy = input["fovy"][0]
+        R = cam_pose[:, :3, :3]
+        T = cam_pose[:, :3, 3]
+
+        camera = Camera(R=R, T=T, FoVx=fovx, FoVy=fovy, img_res=self.img_res)
+
+        flame_pose = input["flame_pose"]
+        expression = input["expression"]
+        bs = flame_pose.shape[0]    # 1, essentially
+
+        verts, _, _ = self.flame.forward(expression_params      = expression,
+                                        full_pose               = flame_pose)
+        
+        cur_flame_mesh = self.mesh_py3d.update_padded(verts)
+        cur_mesh = {}
+        cur_mesh['mesh_verts'] = cur_flame_mesh.verts_packed()
+        cur_mesh['mesh_norms'] = cur_flame_mesh.verts_normals_packed()
+        cur_mesh['mesh_faces'] = cur_flame_mesh.faces_padded().squeeze(0)
+        
+        self.mesh_verts = cur_mesh['mesh_verts'].float().to(self.device)    # torch.Size([5023, 3])
+        self.mesh_norms = cur_mesh['mesh_norms'].float().to(self.device)    # torch.Size([5023, 3])
+
+        self.per_vert_quat = self.quat_helper(self.mesh_verts)  # torch.Size([5023, 4])
+        self.tri_quats = self.per_vert_quat[self.cano_faces]    # torch.Size([9976, 3, 4])
+
+        self._face_scaling = self.quat_helper.calc_face_area_change(self.mesh_verts)
+
+        gaussian = GaussianModel(sh_degree = 0)
+
+        render_image = []
+        viewspace_points = []
+        visibility_filter = []
+        radii = []
+
+        base_xyz = retrieve_verts_barycentric(self.mesh_verts, self.cano_faces,
+                                              self.sample_fidxs, self.sample_bary)
+        
+        base_normal = F.normalize(retrieve_verts_barycentric(self.mesh_norms, self.cano_faces, 
+                                                        self.sample_fidxs, self.sample_bary), 
+                                                        dim=-1)
+        
+        base_quat = torch.einsum('bij,bi->bj', self.tri_quats[self.sample_fidxs], self.sample_bary)
+
+        scaling_alter = self._face_scaling[self.sample_fidxs]
+        
+        # dummy loop
+        for bs_ in range(bs):
+            gaussian._features_dc   = self._features_dc
+            gaussian._features_rest = self._features_rest
+            gaussian._opacity       = self._opacity
+            gaussian._scaling       = self._scaling * scaling_alter
+            gaussian._rotation      = quaternion_multiply(base_quat, self._rotation)
+            gaussian._xyz           = base_xyz + base_normal * self._uvd[..., -1:]
+
+            render_out = render(
+                                camera,
+                                gaussian,
+                                self.bg_color.to(self.device),
+                                device=self.device,
+                                override_color=None
+                            )
+            
+            render_image_ = render_out['render']
+            viewspace_points_ = render_out['viewspace_points']
+            visibility_filter_ = render_out['visibility_filter']
+            radii_ = render_out['radii']
+
+            render_image.append(render_image_)
+            viewspace_points.append(viewspace_points_)
+            visibility_filter.append(visibility_filter_)
+            radii.append(radii_)
+
+        render_image = torch.stack(render_image)
+
+        output = {
+            'rgb_image': render_image,
+            'scale': torch.exp(self._scaling),
+            # ----- gaussian maintainer ----- #
+            'viewspace_points': viewspace_points,   # List
+            'visibility_filter': visibility_filter, # List
+            'radii': radii, # List
+            'bs': bs,
+        }
+
+        return output
+    
     def _add_densification_stats(self, viewspace_point_tensor, update_filter):
 
         self.xyz_gradient_accum[update_filter] += torch.norm(viewspace_point_tensor.grad[update_filter,:2], dim=-1, keepdim=True)

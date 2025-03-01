@@ -2,7 +2,7 @@
 
 "FATE: Full-head Gaussian Avatar with Textural Editing from Monocular Video" (FateAvatar)的实现代码。
 
-[张嘉伟](https://zjwsite.github.io/)<sup>1</sup>, [巫子健](https://github.com/Zijian-Wu)<sup>1</sup>, [梁智扬](https://github.com/ZhiyangLiang?tab=repositories)<sup>1</sup>, [龚奕成](https://github.com/Gong-Yicheng)<sup>1</sup>, [胡东方]()<sup>2</sup>, [姚遥](https://yoyo000.github.io/)<sup>1</sup>, [曹汛](https://cite.nju.edu.cn/People/Faculty/20190621/i5054.html)<sup>1</sup>, and [朱昊](http://zhuhao.cc/home/)<sup>1+</sup>
+[张嘉伟](https://zjwsite.github.io/)<sup>1</sup>, [巫子健](https://github.com/Zijian-Wu)<sup>1</sup>, [梁智扬](https://github.com/ZhiyangLiang?tab=repositories)<sup>1</sup>, [龚奕成](https://github.com/Gong-Yicheng)<sup>1</sup>, [胡东方]()<sup>2</sup>, [姚遥](https://yoyo000.github.io/)<sup>1</sup>, [曹汛](https://cite.nju.edu.cn/People/Faculty/20190621/i5054.html)<sup>1</sup>,  [朱昊](http://zhuhao.cc/home/)<sup>1+</sup>
 
 <sup>1</sup>南京大学, <sup>2</sup>OPPO
 
@@ -70,7 +70,7 @@
   | Model                        | Links                                                        |
   | ---------------------------- | ------------------------------------------------------------ |
   | FLAME2020                    | [generic_model.pkl](https://flame.is.tue.mpg.de/)            |
-  | SphereHead                   | [spherehead-ckpt-025000.pkl](https://cuhko365-my.sharepoint.com/personal/223010106_link_cuhk_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F223010106%5Flink%5Fcuhk%5Fedu%5Fcn%2FDocuments%2FRelease%2FECCV24%5FSphereHead%2FSphereHead%5Fmodel%5Frelease%2Fspherehead%2Dckpt%2D025000%2Epkl&parent=%2Fpersonal%2F223010106%5Flink%5Fcuhk%5Fedu%5Fcn%2FDocuments%2FRelease%2FECCV24%5FSphereHead%2FSphereHead%5Fmodel%5Frelease&ga=1) |
+  | SphereHead                   | [spherehead-ckpt-025000.pkl](https://cuhko365-my.sharepoint.com/:u:/g/personal/223010106_link_cuhk_edu_cn/EUU4STpe1p5HhLKIYgxuN6YBWNxVKac0WCXzoDLSJPn4RA?e=pOyGkK) |
   | GFPGAN1.3                    | [GFPGANv1.3.pth](https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth) |
   | VGG16 for Perpetual Loss     | [vgg16.pt](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt) |
   | Landmark Detection from Dlib | [shape_predictor_68_face_landmarks.dat](https://github.com/italojs/facial-landmarks-recognition/blob/master/shape_predictor_68_face_landmarks.dat) |
@@ -80,7 +80,7 @@
 
 ## 数据
 
-我们支持来自 [IMAvatar](https://github.com/zhengyuf/IMavatar) 和 [INSTA](https://github.com/Zielon/INSTA) 预处理管线的数据集。有关 IMAvatar 数据集的布局，请参阅 [这里](https://github.com/zjwfufu/FateAvatar/blob/b39642aa34e451350eba85996dc0735192c5473e/train/dataset.py#L127)，有关 INSTA 数据集的布局，请参阅 [这里](https://github.com/zjwfufu/FateAvatar/blob/b39642aa34e451350eba85996dc0735192c5473e/train/dataset.py#L336)。`./data` 文件夹应具有以下结构：
+我们支持来自 [IMAvatar](https://github.com/zhengyuf/IMavatar) 和 [INSTA](https://github.com/Zielon/INSTA) 预处理管线的数据集。有关 IMAvatar 数据集的布局，请参阅 [这里](https://github.com/zjwfufu/FateAvatar/blob/b39642aa34e451350eba85996dc0735192c5473e/train/dataset.py#L127)，有关 INSTA 数据集的布局，请参阅 [这里](https://github.com/Zielon/INSTA/blob/3dc6f865e36c7a64632b85f99cc170891e51d44a/scripts/transforms.py#L44)。`./data` 文件夹应具有以下结构：
 
 ```
 .
@@ -99,7 +99,7 @@
 
 我们使用了来自 [INSTA](https://github.com/Zielon/INSTA)、[PointAvatar](https://github.com/zhengyuf/PointAvatar/tree/master)、[Emotalk3D](https://nju-3dv.github.io/projects/EmoTalk3D/) 和 [NerFace](https://github.com/gafniguy/4D-Facial-Avatars) 的公开数据集。要访问 Emotalk3D 数据集，请在 [这里](https://nju-3dv.github.io/projects/EmoTalk3D/static/license/LicenseAgreement_EmoTalk3D.pdf) 申请。
 
-*我们将很快发布处理好的数据集。*
+*我们提供两个受试者预处理好的数据集的[下载链接](https://box.nju.edu.cn/f/5a502b0628bb477b8618/)：INSTA中的bala和IMAvatar中的yufeng。更多的预处理数据集将很快发布。*
 
 ##  预训练
 
@@ -301,11 +301,11 @@ python avatar_gui.py \
 如果您在研究中发现我们的论文或代码有帮助，请使用以下 BibTex 条目进行引用：
 
 ```bibtex
-@article{zhang2024fatefullheadgaussianavatar,
+@inproceedings{zhang2025fate,
       title={FATE: Full-head Gaussian Avatar with Textural Editing from Monocular Video}, 
-      author={Jiawei Zhang and Zijian Wu and Zhiyang Liang and Yicheng Gong and Dongfang Hu and Yao Yao and Xun Cao and Hao Zhu},
-      journal={arXiv preprint arXiv:2411.15604}
-      year={2024},
+      author={Zhang, Jiawei and Wu, Zijian and Liang, Zhiyang and Gong, Yicheng and Hu, Dongfang and Yao, Yao and Cao, Xun and Zhu, Hao},
+      journal={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}
+      year={2025},
 }
 ```
 

@@ -104,7 +104,7 @@ We support datasets from both [IMAvatar](https://github.com/zhengyuf/IMavatar) a
 
 We use publicly available datasets from [INSTA](https://github.com/Zielon/INSTA), [PointAvatar](https://github.com/zhengyuf/PointAvatar/tree/master), [Emotalk3D](https://nju-3dv.github.io/projects/EmoTalk3D/). and [NerFace](https://github.com/gafniguy/4D-Facial-Avatars). To access the Emotalk3D dataset, please request [here](https://nju-3dv.github.io/projects/EmoTalk3D/static/license/LicenseAgreement_EmoTalk3D.pdf).
 
-*We will release the processed datasets soon .*
+*We provide processed datasets for two case: bala in INSTA and yufeng in IMAvatar in this [link](https://box.nju.edu.cn/f/5a502b0628bb477b8618/). More processed datasets will be released soon.*
 
 ##  Pretrained
 
@@ -307,11 +307,11 @@ Note that code under `./model/baseline` is based on the original implementation 
 If you find our paper or code useful in your research, please cite with the following BibTex entry:
 
 ```bibtex
-@article{zhang2024fatefullheadgaussianavatar,
+@inproceedings{zhang2025fate,
       title={FATE: Full-head Gaussian Avatar with Textural Editing from Monocular Video}, 
-      author={Jiawei Zhang and Zijian Wu and Zhiyang Liang and Yicheng Gong and Dongfang Hu and Yao Yao and Xun Cao and Hao Zhu},
-      journal={arXiv preprint arXiv:2411.15604}
-      year={2024},
+      author={Zhang, Jiawei and Wu, Zijian and Liang, Zhiyang and Gong, Yicheng and Hu, Dongfang and Yao, Yao and Cao, Xun and Zhu, Hao},
+      journal={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}
+      year={2025},
 }
 ```
 

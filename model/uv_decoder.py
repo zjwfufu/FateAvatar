@@ -432,11 +432,11 @@ class UVDecoder(UVSampling):
         flame_normals       = face_normals[:, self._prior_face_index]
 
         pos_val = reweight_verts_by_barycoords(
-                                            verts         = verts,
-                                            faces         = self.faces,
-                                            face_index    = self._prior_face_index,
-                                            bary_coords   = self._prior_bary_coords
-                                        )
+            verts         = verts,
+            faces         = self.faces,
+            face_index    = self._prior_face_index,
+            bary_coords   = self._prior_bary_coords
+        )
         
         #-------------------------------    render gaussian     -------------------------------#
 
@@ -490,12 +490,12 @@ class UVDecoder(UVSampling):
             gaussian._xyz           = pos_val[bs_] + flame_normals[bs_] * self.shell_len * torch.tanh(gaussian_attr_dict['offset']).contiguous()
 
             render_out = render(
-                                camera,
-                                gaussian,
-                                self.bg_color.to(self.device),
-                                device=self.device,
-                                override_color=None
-                            )
+                camera,
+                gaussian,
+                self.bg_color.to(self.device),
+                device=self.device,
+                override_color=None
+            )
             
             render_image_ = render_out['render']
             viewspace_points_ = render_out['viewspace_points']
@@ -606,11 +606,11 @@ class UVDecoder(UVSampling):
         flame_normals       = face_normals[:, self._prior_face_index]
 
         pos_val = reweight_verts_by_barycoords(
-                                            verts         = verts,
-                                            faces         = self.faces,
-                                            face_index    = self._prior_face_index,
-                                            bary_coords   = self._prior_bary_coords
-                                        )
+            verts         = verts,
+            faces         = self.faces,
+            face_index    = self._prior_face_index,
+            bary_coords   = self._prior_bary_coords
+        )
         
         #-------------------------------    render gaussian     -------------------------------#
 
@@ -663,12 +663,12 @@ class UVDecoder(UVSampling):
             gaussian._xyz           = pos_val[bs_] + flame_normals[bs_] * self.shell_len * torch.tanh(gaussian_attr_dict['offset']).contiguous()
 
             render_out = render(
-                                camera,
-                                gaussian,
-                                self.bg_color.to(self.device),
-                                device=self.device,
-                                override_color=None
-                            )
+                camera,
+                gaussian,
+                self.bg_color.to(self.device),
+                device=self.device,
+                override_color=None
+            )
             
             render_image_ = render_out['render']
             viewspace_points_ = render_out['viewspace_points']

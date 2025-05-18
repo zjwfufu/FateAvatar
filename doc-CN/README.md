@@ -54,10 +54,10 @@
   bash build.sh	# you may need install manually in Win10
   cd ..
   
-  # for monogaussianavatar baseline
+  # [Optional] for monogaussianavatar baseline
   pip install functorch==0.2.0
   
-  # for splattingavatar baseline
+  # [Optional] for splattingavatar baseline
   pip install libigl packaging pybind11
   
   cd submodules/simple_phongsurf
@@ -99,11 +99,15 @@
 
 我们使用了来自 [INSTA](https://github.com/Zielon/INSTA)、[PointAvatar](https://github.com/zhengyuf/PointAvatar/tree/master)、[Emotalk3D](https://nju-3dv.github.io/projects/EmoTalk3D/) 和 [NerFace](https://github.com/gafniguy/4D-Facial-Avatars) 的公开数据集。要访问 Emotalk3D 数据集，请在 [这里](https://nju-3dv.github.io/projects/EmoTalk3D/static/license/LicenseAgreement_EmoTalk3D.pdf) 申请。
 
-*我们提供两个受试者预处理好的数据集的[下载链接](https://box.nju.edu.cn/f/5a502b0628bb477b8618/)：INSTA中的bala和IMAvatar中的yufeng。更多的预处理数据集将很快发布。*
+*我们提供两个受试者预处理好的数据集的[下载链接](https://box.nju.edu.cn/f/5a502b0628bb477b8618/)：INSTA中的bala和IMAvatar中的yufeng。~~更多的预处理数据集将很快发布。~~*
+
+## NeRSemble Benchmark
+
+[2025/5/18 更新] 我们提供了用于[NeRSemble Benchmark](https://kaldir.vc.in.tum.de/nersemble_benchmark/benchmark/mono_flame_avatar)的脚本 `run_nersemble_benchmark.sh` 。 如果需要尝试, 只需运行 `pip install nersemble_benchmark` 并将 `FLAME2023.pkl` 连同两个顶点索引文件一起，放入 `./weights` 目录下。
 
 ##  预训练
 
-*我们将很快发布预训练模型。*
+~~*我们将很快发布预训练模型。*~~
 
 ## 用法
 

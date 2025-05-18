@@ -55,7 +55,7 @@ class BaseTrainer(object):
             train_dataset,
             batch_size      = 1,
             shuffle         = True,
-            collate_fn      = train_dataset.collate_fn,
+            collate_fn      = train_dataset.collate_fn if hasattr(train_dataset, 'collate_fn') else None,
             num_workers     = 4,
         )
         
@@ -63,7 +63,7 @@ class BaseTrainer(object):
             test_dataset,
             batch_size      = 1,
             shuffle         = False,
-            collate_fn      = test_dataset.collate_fn,
+            collate_fn      = test_dataset.collate_fn if hasattr(test_dataset, 'collate_fn') else None,
             num_workers     = 4
         )
         
@@ -111,43 +111,44 @@ class BaseTrainer(object):
         self.log(f'[INFO] Trainer: {self.name} | {self.time_stamp} | {self.device} | {self.workspace}')
 
     def register_tracking_optimization(self):
-        num_train_frames        = len(self.train_dataset)
+        if self.cfg.optimize_tracking:
+            num_train_frames        = len(self.train_dataset)
 
-        self.train_expression   = torch.nn.Embedding(num_train_frames, self.cfg.n_exp,
-                                                     _weight    = self.train_dataset.data["expressions"],
-                                                     sparse     = True).to(self.device)
-        self.train_flame_pose   = torch.nn.Embedding(num_train_frames, 15,
-                                                     _weight    = self.train_dataset.data["flame_pose"],
-                                                     sparse     = True).to(self.device)
-        self.train_cam_pose     = torch.nn.Embedding(num_train_frames, 3,
-                                                     _weight    = self.train_dataset.data["world_mats"][:, :3, 3],
-                                                     sparse     = True).to(self.device)
-        
-        num_test_frames         = len(self.test_dataset)
+            self.train_expression   = torch.nn.Embedding(num_train_frames, self.cfg.n_exp,
+                                                        _weight    = self.train_dataset.data["expressions"],
+                                                        sparse     = True).to(self.device)
+            self.train_flame_pose   = torch.nn.Embedding(num_train_frames, 15,
+                                                        _weight    = self.train_dataset.data["flame_pose"],
+                                                        sparse     = True).to(self.device)
+            self.train_cam_pose     = torch.nn.Embedding(num_train_frames, 3,
+                                                        _weight    = self.train_dataset.data["world_mats"][:, :3, 3],
+                                                        sparse     = True).to(self.device)
+            
+            num_test_frames         = len(self.test_dataset)
 
-        self.test_expression    = torch.nn.Embedding(num_test_frames, self.cfg.n_exp,
-                                                     _weight    = self.test_dataset.data["expressions"],
-                                                     sparse     = True).to(self.device)
-        self.test_flame_pose    = torch.nn.Embedding(num_test_frames, 15,
-                                                     _weight    = self.test_dataset.data["flame_pose"],
-                                                     sparse     = True).to(self.device)
-        self.test_cam_pose      = torch.nn.Embedding(num_test_frames, 3,
-                                                     _weight    = self.test_dataset.data["world_mats"][:, :3, 3],
-                                                     sparse     = True).to(self.device)
-        
-        l_train_tracking        = [
-            {'params': list(self.train_expression.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "train_expression"},
-            {'params': list(self.train_flame_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "train_flame_pose"},
-            {'params': list(self.train_cam_pose.parameters()),  'lr': self.cfg.training.tracking_lr, 'name': "train_cam_pose"},
-        ]
-        self.optimizer_train_tracking   = torch.optim.SparseAdam(l_train_tracking, lr=self.cfg.training.tracking_lr)
+            self.test_expression    = torch.nn.Embedding(num_test_frames, self.cfg.n_exp,
+                                                        _weight    = self.test_dataset.data["expressions"],
+                                                        sparse     = True).to(self.device)
+            self.test_flame_pose    = torch.nn.Embedding(num_test_frames, 15,
+                                                        _weight    = self.test_dataset.data["flame_pose"],
+                                                        sparse     = True).to(self.device)
+            self.test_cam_pose      = torch.nn.Embedding(num_test_frames, 3,
+                                                        _weight    = self.test_dataset.data["world_mats"][:, :3, 3],
+                                                        sparse     = True).to(self.device)
+            
+            l_train_tracking        = [
+                {'params': list(self.train_expression.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "train_expression"},
+                {'params': list(self.train_flame_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "train_flame_pose"},
+                {'params': list(self.train_cam_pose.parameters()),  'lr': self.cfg.training.tracking_lr, 'name': "train_cam_pose"},
+            ]
+            self.optimizer_train_tracking   = torch.optim.SparseAdam(l_train_tracking, lr=self.cfg.training.tracking_lr)
 
-        l_test_tracking         = [
-            {'params': list(self.test_expression.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_expression"},
-            {'params': list(self.test_flame_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_flame_pose"},
-            {'params': list(self.test_cam_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_cam_pose"},     
-        ]
-        self.optimizer_test_tracking   = torch.optim.SparseAdam(l_test_tracking, lr=self.cfg.training.tracking_lr)
+            l_test_tracking         = [
+                {'params': list(self.test_expression.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_expression"},
+                {'params': list(self.test_flame_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_flame_pose"},
+                {'params': list(self.test_cam_pose.parameters()), 'lr': self.cfg.training.tracking_lr, 'name': "test_cam_pose"},     
+            ]
+            self.optimizer_test_tracking   = torch.optim.SparseAdam(l_test_tracking, lr=self.cfg.training.tracking_lr)
 
     def register_optimizer_group(self):
         

@@ -18,15 +18,15 @@ from tools.util import get_bg_color
 
 class MonoGaussianAvatar(nn.Module):
     def __init__(
-            self,
-            shape_params,
-            img_res,
-            canonical_expression,
-            canonical_pose,
-            background_color,
-            cfg_model,
-            device
-        ):
+        self,
+        shape_params,
+        img_res,
+        canonical_expression,
+        canonical_pose,
+        background_color,
+        cfg_model,
+        device
+    ):
         super().__init__()
         """
         official code:
@@ -89,19 +89,22 @@ class MonoGaussianAvatar(nn.Module):
 
     def _register_flame(self, flame_path, landmark_embedding_path):
 
-        self.flame = FLAME(flame_path,
-                        landmark_embedding_path,
-                        n_shape              = self.cfg_model.n_shape,
-                        n_exp                = self.cfg_model.n_exp,
-                        shape_params         = self.shape_params,
-                        canonical_expression = self.canonical_expression,
-                        canonical_pose       = self.canonical_pose,
-                        device               = self.device,
-                        factor               = 4,
-                    ).to(self.device)
+        self.flame = FLAME(
+            flame_path,
+            landmark_embedding_path,
+            n_shape              = self.cfg_model.n_shape,
+            n_exp                = self.cfg_model.n_exp,
+            shape_params         = self.shape_params,
+            canonical_expression = self.canonical_expression,
+            canonical_pose       = self.canonical_pose,
+            device               = self.device,
+            factor               = 4,
+        ).to(self.device)
         
-        canonical_verts, canonical_pose_feature, canonical_transformations = self.flame(expression_params = self.flame.canonical_exp,
-                                                                                        full_pose         = self.flame.canonical_pose)
+        canonical_verts, canonical_pose_feature, canonical_transformations = self.flame(
+            expression_params = self.flame.canonical_exp,
+            full_pose         = self.flame.canonical_pose
+        )
         
         # make sure call of FLAME is successful
         self.canonical_verts                    = canonical_verts
@@ -132,9 +135,11 @@ class MonoGaussianAvatar(nn.Module):
         max_points      = conf.point_cloud.max_points
         init_radius     = 0.5 / self.scene_scale
         
-        self.pc = PointCloud(n_init_points  = n_init_points,
-                             init_radius    = init_radius,
-                             max_points     = max_points).to(self.device)
+        self.pc = PointCloud(
+            n_init_points  = n_init_points,
+            init_radius    = init_radius,
+            max_points     = max_points
+        ).to(self.device)
         
         self.num_points = self.pc.points.shape[0]
 
@@ -149,7 +154,10 @@ class MonoGaussianAvatar(nn.Module):
         R = cam_pose[:, :3, :3]
         T = cam_pose[:, :3, 3]
 
-        camera = Camera(R=R, T=T * self.cam_scale, FoVx=fovx, FoVy=fovy, img_res=self.img_res)
+        camera = Camera(
+            R=R, T=T * self.cam_scale,
+            FoVx=fovx, FoVy=fovy, img_res=self.img_res
+        )
 
         flame_pose = input["flame_pose"]
         expression = input["expression"]
@@ -158,8 +166,10 @@ class MonoGaussianAvatar(nn.Module):
         n_points    = self.pc.points.shape[0]
         total_points    = n_points * bs
 
-        verts, pose_feature, transformations = self.flame.forward(expression_params      = expression,
-                                                                full_pose               = flame_pose)
+        verts, pose_feature, transformations = self.flame.forward(
+            expression_params      = expression,
+            full_pose               = flame_pose
+        )
         
         if self.ghostbone:
             I = torch.eye(4).unsqueeze(0).unsqueeze(0).expand(bs, -1, -1, -1).float().to(self.device)
@@ -168,12 +178,12 @@ class MonoGaussianAvatar(nn.Module):
         feature_vector = self._compute_canonical_normals_and_feature_vectors()
 
         transformed_points, rgb_points, scale_vals, rotation_vals, opacity_vals = self.get_rbg_value_functorch(
-                                    pnts_c          = self.pc.points,
-                                    feature_vectors = feature_vector,
-                                    pose_feature    = pose_feature.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
-                                    betas           = expression.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
-                                    transformations = transformations.unsqueeze(1).expand(-1, n_points, -1, -1, -1).reshape(total_points, *transformations.shape[1:]),
-                                )
+            pnts_c          = self.pc.points,
+            feature_vectors = feature_vector,
+            pose_feature    = pose_feature.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
+            betas           = expression.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
+            transformations = transformations.unsqueeze(1).expand(-1, n_points, -1, -1, -1).reshape(total_points, *transformations.shape[1:]),
+        )
         
         shapedirs, posedirs, lbs_weights, pnts_c_flame = self.deformer_network.query_weights(self.pc.points.detach())
         transformed_points = transformed_points.reshape(bs, n_points, 3)
@@ -266,12 +276,12 @@ class MonoGaussianAvatar(nn.Module):
         feature_vector = self._compute_canonical_normals_and_feature_vectors()
 
         transformed_points, rgb_points, scale_vals, rotation_vals, opacity_vals = self.get_rbg_value_functorch(
-                                    pnts_c          = self.pc.points,
-                                    feature_vectors = feature_vector,
-                                    pose_feature    = pose_feature.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
-                                    betas           = expression.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
-                                    transformations = transformations.unsqueeze(1).expand(-1, n_points, -1, -1, -1).reshape(total_points, *transformations.shape[1:]),
-                                )
+            pnts_c          = self.pc.points,
+            feature_vectors = feature_vector,
+            pose_feature    = pose_feature.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
+            betas           = expression.unsqueeze(1).expand(-1, n_points, -1).reshape(total_points, -1),
+            transformations = transformations.unsqueeze(1).expand(-1, n_points, -1, -1, -1).reshape(total_points, *transformations.shape[1:]),
+        )
         
         shapedirs, posedirs, lbs_weights, pnts_c_flame = self.deformer_network.query_weights(self.pc.points.detach())
         transformed_points = transformed_points.reshape(bs, n_points, 3)
@@ -772,16 +782,17 @@ class GaussianNetwork(nn.Module):
 #-------------------------------------------------------------------------------#
 
 class ForwardDeformer(nn.Module):
-    def __init__(self,
-                FLAMEServer,
-                d_in,
-                dims,
-                multires,
-                num_exp=50,
-                deform_c=False,
-                weight_norm=True,
-                ghostbone=False,
-                ):
+    def __init__(
+        self,
+        FLAMEServer,
+        d_in,
+        dims,
+        multires,
+        num_exp=50,
+        deform_c=False,
+        weight_norm=True,
+        ghostbone=False,
+    ):
         super().__init__()
         self.FLAMEServer = FLAMEServer
         # pose correctives, expression blendshapes and linear blend skinning weights

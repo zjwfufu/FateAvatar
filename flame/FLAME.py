@@ -42,17 +42,17 @@ class FLAME(nn.Module):
     which outputs the a mesh and 2D/3D facial landmarks
     """
     def __init__(
-            self,
-            flame_model_path:   str,
-            lmk_embedding_path: str,
-            n_shape:            int,
-            n_exp:              int,
-            shape_params:       torch.Tensor,
-            canonical_expression,
-            canonical_pose:     int,
-            device:             torch.device,
-            factor:             int = 1
-        ):
+        self,
+        flame_model_path:   str,
+        lmk_embedding_path: str,
+        n_shape:            int,
+        n_exp:              int,
+        shape_params:       torch.Tensor,
+        canonical_expression,
+        canonical_pose:     int,
+        device:             torch.device,
+        factor:             int = 1
+    ):
         super(FLAME, self).__init__()
         print("Setting up [FLAME]")
         print(f"Loading model from: {flame_model_path}")
@@ -144,10 +144,12 @@ class FLAME(nn.Module):
         batch_size = expression_params.shape[0]
         betas = torch.cat([torch.zeros(batch_size, self.n_shape).to(expression_params.device), expression_params[:, :self.n_exp]], dim=1)
         template_vertices = self.v_template.unsqueeze(0).expand(batch_size, -1, -1)
-        vertices, pose_feature, transformations = lbs(betas, full_pose, template_vertices,
-                          self.shapedirs, self.posedirs,
-                          self.J_regressor, self.parents,
-                          self.lbs_weights, dtype=self.dtype)
+        vertices, pose_feature, transformations = lbs(
+            betas, full_pose, template_vertices,
+            self.shapedirs, self.posedirs,
+            self.J_regressor, self.parents,
+            self.lbs_weights, dtype=self.dtype
+        )
         
         return vertices, pose_feature, transformations
     
@@ -220,7 +222,17 @@ class FLAME(nn.Module):
             canonical_exp = torch.cat([self.canonical_exp, torch.zeros(1, shapedirs.shape[-1] - self.n_exp).cuda()], dim=1)
         else:
             canonical_exp = self.canonical_exp
-        pnts_c_original = inverse_pts(pnts_c, canonical_exp.expand(num_points, -1), self.canonical_transformations.expand(num_points, -1, -1, -1), self.canonical_pose_feature.expand(num_points, -1), shapedirs, posedirs, lbs_weights, dtype=dtype)
-        pnts_p = forward_pts(pnts_c_original, betas, transformations, pose_feature, shapedirs, posedirs, lbs_weights, dtype=dtype)
+        pnts_c_original = inverse_pts(
+            pnts_c, canonical_exp.expand(num_points, -1),
+            self.canonical_transformations.expand(num_points, -1, -1, -1),
+            self.canonical_pose_feature.expand(num_points, -1),
+            shapedirs, posedirs, lbs_weights, dtype=dtype
+        )
+        pnts_p = forward_pts(
+            pnts_c_original, betas,
+            transformations,
+            pose_feature,
+            shapedirs, posedirs, lbs_weights, dtype=dtype
+        )
         return pnts_p
 

@@ -408,13 +408,19 @@ class Trainer(BaseTrainer):
 
         state['model'] = self.model.state_dict()
 
-        state['train_expression'] = self.train_expression.state_dict()
-        state['train_flame_pose'] = self.train_flame_pose.state_dict()
-        state['train_cam_pose']   = self.train_cam_pose.state_dict()
+        try:
+            state['train_expression'] = self.train_expression.state_dict()
+            state['train_flame_pose'] = self.train_flame_pose.state_dict()
+            state['train_cam_pose']   = self.train_cam_pose.state_dict()
+        except Exception as e:
+            self.log("[INFO] Fail to save optimized train set tracking, Skip.")
 
-        state['test_expression']  = self.test_expression.state_dict()
-        state['test_flame_pose']  = self.test_flame_pose.state_dict()
-        state['test_cam_pose']    = self.test_cam_pose.state_dict()
+        try:
+            state['test_expression']  = self.test_expression.state_dict()
+            state['test_flame_pose']  = self.test_flame_pose.state_dict()
+            state['test_cam_pose']    = self.test_cam_pose.state_dict()
+        except Exception as e:
+            self.log("[INFO] Fail to save optimized test set tracking, Skip.")
 
         file_base = os.path.join(save_path, name)
 

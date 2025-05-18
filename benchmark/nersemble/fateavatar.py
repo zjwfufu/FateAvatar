@@ -2,8 +2,6 @@ import copy
 import torch
 import torch.nn as nn
 
-from flame.FLAME            import FLAME
-
 from pytorch3d.io   import load_obj
 from pytorch3d.ops  import knn_points
 from pytorch3d.transforms import (
@@ -33,15 +31,14 @@ import warnings
 warnings.filterwarnings("ignore", message="No mtl file provided")
 warnings.filterwarnings("ignore", message="Mtl file does not exist")
 
+from benchmark.nersemble.FLAME import FLAME, FlameConfig
+
 #-------------------------------------------------------------------------------#
 
 class FateAvatar(nn.Module):
     def __init__(
             self,
-            shape_params,
             img_res,
-            canonical_expression,
-            canonical_pose,
             background_color,
             cfg_model,
             device
@@ -61,14 +58,7 @@ class FateAvatar(nn.Module):
 
         self.cfg_model = cfg_model
 
-        self.shape_params           = shape_params
-        self.canonical_expression   = canonical_expression
-        self.canonical_pose         = canonical_pose
-
-        self._register_flame(
-            flame_path  = './weights/generic_model.pkl',
-            landmark_embedding_path = './weights/landmark_embedding.npy'
-        )
+        self._register_flame()
 
         self._register_template_mesh(template_path='./weights/head_template_mouth_close.obj')
 
@@ -93,29 +83,21 @@ class FateAvatar(nn.Module):
         self.delta_vertex       = torch.zeros_like(self.flame.v_template).to(self.device)
         self.delta_vertex       = nn.Parameter(self.delta_vertex.requires_grad_(True))
 
-    def _register_flame(self, flame_path, landmark_embedding_path):
+    def _register_flame(self):
 
-        self.flame = FLAME(
-            flame_path,
-            landmark_embedding_path,
-            n_shape              = self.cfg_model.n_shape,
-            n_exp                = self.cfg_model.n_exp,
-            shape_params         = self.shape_params,
-            canonical_expression = self.canonical_expression,
-            canonical_pose       = self.canonical_pose,
-            device               = self.device
-        ).to(self.device)
-        
-        canonical_verts, canonical_pose_feature, canonical_transformations = self.flame(
-            expression_params = self.flame.canonical_exp,
-            full_pose         = self.flame.canonical_pose
+        flame_config = FlameConfig(
+            shape_params=300,
+            expression_params=100,
+            batch_size=1,
         )
+
+        self.flame = FLAME(flame_config).to(self.device)
         
+        canonical_verts = self.flame.v_template
+
         # make sure call of FLAME is successful
-        self.canonical_verts                    = canonical_verts
-        self.flame.canonical_verts              = canonical_verts.squeeze(0)
-        self.flame.canonical_pose_feature       = canonical_pose_feature
-        self.flame.canonical_transformations    = canonical_transformations
+        self.canonical_verts                    = canonical_verts[None, ...]
+        self.flame.canonical_verts              = canonical_verts
     
     def _register_template_mesh(self, template_path):
 
@@ -132,10 +114,6 @@ class FateAvatar(nn.Module):
             uv_faces      = uvfaces
         )
         
-        # face_index, bary_coords = random_sampling_barycoords(num_points     = self.uv_resolution * self.uv_resolution,
-        #                                                      vertices       = verts,
-        #                                                      faces          = faces)
-
         uvcoords_sample = reweight_uvcoords_by_barycoords(
             uvcoords    = uvcoords,
             uvfaces     = uvfaces,
@@ -201,25 +179,53 @@ class FateAvatar(nn.Module):
         R = cam_pose[:, :3, :3]
         T = cam_pose[:, :3, 3]
 
-        camera = Camera(R=R, T=T, FoVx=fovx, FoVy=fovy, img_res=self.img_res)
+        intrinsics = input["intrinsics"]
 
-        flame_pose = input["flame_pose"]
-        expression = input["expression"]
-        bs = flame_pose.shape[0]    # 1, essentially
+        camera = Camera(
+            R=R, T=T, FoVx=fovx, FoVy=fovy,
+            img_res=self.img_res, intrinsics=intrinsics
+        )
+
+        shape_param = input["shape"]
+        experssion_param = input["expression"]
+        pose_param = torch.cat([
+            torch.zeros_like(input["rotation"]),
+            input["jaw"]], dim=-1
+        )
+        neck_pose_param = input["neck"]
+        eye_pose_param = input["eyes"]
+        transl_param = input["translation"]
+
+        rotation = input["rotation"]
+        scale = input["scale"]
+        
+        bs = pose_param.shape[0]    # 1, essentially
 
         #-------------------------------    prepare splats position     -------------------------------#
 
         verts, _, _ = self.flame.forward_with_delta_blendshape(
-            expression_params   = expression,
-            full_pose           = flame_pose,
+            shape_params        = shape_param,
+            expression_params   = experssion_param,
+            pose_params         = pose_param,
+            neck_pose           = neck_pose_param,
+            eye_pose            = eye_pose_param,
+            transl              = transl_param,
+            rotation            = rotation,
+            scale               = scale,
             delta_shapedirs     = self.delta_shapedirs if self.cfg_model.delta_blendshape else None,
             delta_posedirs      = self.delta_posedirs if self.cfg_model.delta_blendshape else None,
             delta_vertex        = self.delta_vertex if self.cfg_model.delta_vertex else None
         )
 
         verts_orig, _, _ = self.flame.forward(
-            expression_params   = expression,
-            full_pose           = flame_pose
+            shape_params        = shape_param,
+            expression_params   = experssion_param,
+            pose_params         = pose_param,
+            neck_pose           = neck_pose_param,
+            eye_pose            = eye_pose_param,
+            transl              = transl_param,
+            rotation            = rotation,
+            scale               = scale,
         )
         
         face_orien_mat, face_scaling    = compute_face_orientation(verts, self.faces, return_scale=True)
@@ -383,26 +389,58 @@ class FateAvatar(nn.Module):
         R_cano = R_I.to(self.device)
         T_cano = copy.deepcopy(T);  T_cano[:, 0] = 0; T_cano[:, 1] = 0
 
-        camera      = Camera(R=R, T=T, FoVx=fovx, FoVy=fovy, img_res=self.img_res)
-        camera_cano = Camera(R=R_cano, T=T_cano, FoVx=fovx, FoVy=fovy, img_res=self.img_res)
+        intrinsics = input["intrinsics"]
 
-        flame_pose = input["flame_pose"]
-        expression = input["expression"]
-        bs = flame_pose.shape[0]    # 1, essentially
+        camera = Camera(
+            R=R, T=T, FoVx=fovx, FoVy=fovy,
+            img_res=self.img_res, intrinsics=intrinsics
+        )
+
+        camera_cano = Camera(
+            R=R_cano, T=T_cano, FoVx=fovx, FoVy=fovy,
+            img_res=self.img_res, intrinsics=intrinsics
+        )
+
+        shape_param = input["shape"]
+        experssion_param = input["expression"]
+        pose_param = torch.cat([
+            torch.zeros_like(input["rotation"]),
+            input["jaw"]], dim=-1
+        )
+        neck_pose_param = input["neck"]
+        eye_pose_param = input["eyes"]
+        transl_param = input["translation"]
+
+        rotation = input["rotation"]
+        scale = input["scale"]
+        
+        bs = pose_param.shape[0]    # 1, essentially
 
         #-------------------------------    prepare splats position     -------------------------------#
 
         verts, _, _ = self.flame.forward_with_delta_blendshape(
-            expression_params   = expression,
-            full_pose           = flame_pose,
+            shape_params        = shape_param,
+            expression_params   = experssion_param,
+            pose_params         = pose_param,
+            neck_pose           = neck_pose_param,
+            eye_pose            = eye_pose_param,
+            transl              = transl_param,
+            rotation            = rotation,
+            scale               = scale,
             delta_shapedirs     = self.delta_shapedirs if self.cfg_model.delta_blendshape else None,
             delta_posedirs      = self.delta_posedirs if self.cfg_model.delta_blendshape else None,
             delta_vertex        = self.delta_vertex if self.cfg_model.delta_vertex else None
         )
 
         verts_orig, _, _ = self.flame.forward(
-            expression_params   = expression,
-            full_pose           = flame_pose
+            shape_params        = shape_param,
+            expression_params   = experssion_param,
+            pose_params         = pose_param,
+            neck_pose           = neck_pose_param,
+            eye_pose            = eye_pose_param,
+            transl              = transl_param,
+            rotation            = rotation,
+            scale               = scale,
         )
         
         face_orien_mat, _               = compute_face_orientation(verts, self.faces, return_scale=False)
@@ -417,25 +455,40 @@ class FateAvatar(nn.Module):
         flame_normals       = face_normals[:, self.face_index]
 
         pos_val = reweight_verts_by_barycoords(
-                                            verts         = verts,
-                                            faces         = self.faces,
-                                            face_index    = self.face_index,
-                                            bary_coords   = self.bary_coords
-                                        )
+            verts         = verts,
+            faces         = self.faces,
+            face_index    = self.face_index,
+            bary_coords   = self.bary_coords
+        )
         
         #-----------------------------------------------------#
         
         verts_cano, _, _ = self.flame.forward_with_delta_blendshape(
-            expression_params   = self.flame.canonical_exp,
-            full_pose           = self.flame.canonical_pose,
-            delta_shapedirs     = self.delta_shapedirs if self.cfg_model.delta_blendshape else None,
-            delta_posedirs      = self.delta_posedirs if self.cfg_model.delta_blendshape else None,
-            delta_vertex        = self.delta_vertex if self.cfg_model.delta_vertex else None
+            shape_params         = shape_param,
+            expression_params    = torch.zeros_like(experssion_param),
+            pose_params          = torch.zeros_like(pose_param),
+            neck_pose            = neck_pose_param,
+            eye_pose             = eye_pose_param,
+            transl               = transl_param,
+            rotation             = rotation,
+            scale                = scale,
+            delta_shapedirs      = self.delta_shapedirs if self.cfg_model.delta_blendshape else None,
+            delta_posedirs       = self.delta_posedirs if self.cfg_model.delta_blendshape else None,
+            delta_vertex         = self.delta_vertex if self.cfg_model.delta_vertex else None,
+            model_view_transform = False,
         )
         
         verts_cano_orig, _, _ = self.flame.forward(
-            expression_params   = expression,
-            full_pose           = flame_pose
+            shape_params         = shape_param,
+            expression_params    = torch.zeros_like(experssion_param),
+            pose_params          = torch.zeros_like(pose_param),
+            neck_pose            = neck_pose_param,
+            eye_pose             = eye_pose_param,
+            transl               = transl_param,
+            rotation             = rotation,
+            scale                = scale,
+            model_view_transform = False,
+            
         )
 
         face_orien_mat_cano, face_scaling_cano    = compute_face_orientation(verts_cano, self.faces, return_scale=True)
@@ -588,6 +641,7 @@ class FateAvatar(nn.Module):
             # ----- nvidiffrast ----- #
             'verts': verts,
             'faces': self.faces,
+            # 'camera': camera
             'camera': camera
         }
 

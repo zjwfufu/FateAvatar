@@ -45,15 +45,15 @@ def a_in_b_torch(a, b):
 
 class FlashAvatar(nn.Module):
     def __init__(
-            self,
-            shape_params,
-            img_res,
-            canonical_expression,
-            canonical_pose,
-            background_color,
-            cfg_model,
-            device
-        ):
+        self,
+        shape_params,
+        img_res,
+        canonical_expression,
+        canonical_pose,
+        background_color,
+        cfg_model,
+        device
+    ):
         super().__init__()
         """
         official code:
@@ -250,8 +250,10 @@ class FlashAvatar(nn.Module):
         scale_delta = deforms[..., 7:]
         scale_delta = torch.exp(scale_delta)
 
-        verts, _, _ = self.flame.forward(expression_params      = expression,
-                                        full_pose               = flame_pose)
+        verts, _, _ = self.flame.forward(
+            expression_params      = expression,
+            full_pose               = flame_pose
+        )
         
         pos_val = reweight_verts_by_barycoords(
             verts         = verts,
@@ -320,8 +322,10 @@ class FlashAvatar(nn.Module):
         scale_delta = deforms[..., 7:]
         scale_delta = torch.exp(scale_delta)
 
-        verts, _, _ = self.flame.forward(expression_params      = expression,
-                                        full_pose               = flame_pose)
+        verts, _, _ = self.flame.forward(
+            expression_params      = expression,
+            full_pose               = flame_pose
+        )
         
         pos_val = reweight_verts_by_barycoords(
             verts         = verts,

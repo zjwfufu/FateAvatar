@@ -59,10 +59,10 @@ For compatibility reasons, we recommend running this repository in Linux. Instal
   pip install .
   cd ..
   
-  # for monogaussianavatar baseline
+  # [Optional] for monogaussianavatar baseline
   pip install functorch==0.2.0
   
-  # for splattingavatar baseline
+  # [Optional] for splattingavatar baseline
   pip install libigl packaging pybind11
   
   cd submodules/simple_phongsurf
@@ -104,11 +104,16 @@ We support datasets from both [IMAvatar](https://github.com/zhengyuf/IMavatar) a
 
 We use publicly available datasets from [INSTA](https://github.com/Zielon/INSTA), [PointAvatar](https://github.com/zhengyuf/PointAvatar/tree/master), [Emotalk3D](https://nju-3dv.github.io/projects/EmoTalk3D/). and [NerFace](https://github.com/gafniguy/4D-Facial-Avatars). To access the Emotalk3D dataset, please request [here](https://nju-3dv.github.io/projects/EmoTalk3D/static/license/LicenseAgreement_EmoTalk3D.pdf).
 
-*We provide processed datasets for two case: bala in INSTA and yufeng in IMAvatar in this [link](https://box.nju.edu.cn/f/5a502b0628bb477b8618/). More processed datasets will be released soon.*
+*We provide processed datasets for two case: bala in INSTA and yufeng in IMAvatar in this [link](https://box.nju.edu.cn/f/5a502b0628bb477b8618/). ~~More processed datasets will be released soon.~~*
+
+## NeRSemble Benchmark
+
+[2025/5/18 Update] We provide the script `run_nersemble_benchmark.sh` for the [NeRSemble Benchmark](https://kaldir.vc.in.tum.de/nersemble_benchmark/benchmark/mono_flame_avatar). If you would like to try it out, you may need to run `pip install nersemble_benchmark` and place `FLAME2023.pkl` along with the two vertex index files into the `./weights` directory.
+
 
 ##  Pretrained
 
-*We will release the pretrained models and checkpoints soon.*
+~~*We will release the pretrained models and checkpoints soon.*~~
 
 ## Usage
 

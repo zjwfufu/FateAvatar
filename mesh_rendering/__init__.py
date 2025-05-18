@@ -1,3 +1,7 @@
+"""
+Code is borrowed from https://github.com/ShenhanQian/GaussianAvatars/blob/main/mesh_renderer/__init__.py
+"""
+
 # 
 # Toyota Motor Europe NV/SA and its affiliated companies retain all intellectual 
 # property and proprietary rights in and to this software and related documentation. 

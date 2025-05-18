@@ -18,15 +18,15 @@ from volume_rendering.render_3dgs       import render
 
 class GaussianAvatars(nn.Module):
     def __init__(
-            self,
-            shape_params,
-            img_res,
-            canonical_expression,
-            canonical_pose,
-            background_color,
-            cfg_model,
-            device
-        ):
+        self,
+        shape_params,
+        img_res,
+        canonical_expression,
+        canonical_pose,
+        background_color,
+        cfg_model,
+        device
+    ):
         super().__init__()
         """
         official code:

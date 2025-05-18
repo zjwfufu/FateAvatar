@@ -25,15 +25,15 @@ from tools.util import get_bg_color
 
 class SplattingAvatar(nn.Module):
     def __init__(
-            self,
-            shape_params,
-            img_res,
-            canonical_expression,
-            canonical_pose,
-            background_color,
-            cfg_model,
-            device
-        ):
+        self,
+        shape_params,
+        img_res,
+        canonical_expression,
+        canonical_pose,
+        background_color,
+        cfg_model,
+        device
+    ):
         """
         official code:
             https://github.com/initialneil/SplattingAvatar
@@ -66,8 +66,10 @@ class SplattingAvatar(nn.Module):
         self._register_flame(flame_path='./weights/generic_model.pkl',
                              landmark_embedding_path='./weights/landmark_embedding.npy')
         
-        self.mesh_py3d = py3d_meshes.Meshes(self.flame.v_template[None, ...].float(), # torch.Size([1, 5023, 3])
-                                            self.flame.faces_tensor[None, ...].int()) # torch.Size([1, 9976, 3])
+        self.mesh_py3d = py3d_meshes.Meshes(
+            self.flame.v_template[None, ...].float(), # torch.Size([1, 5023, 3])
+            self.flame.faces_tensor[None, ...].int() # torch.Size([1, 9976, 3])
+        )
         
         flame_mesh = self.mesh_py3d.update_padded(self.canonical_verts)
         
@@ -117,8 +119,10 @@ class SplattingAvatar(nn.Module):
         self.quat_helper = PerVertQuaternion(cano_verts, cano_faces).to(self.device)
 
         # phong surface for triangle walk
-        self.phongsurf = PhongSurfacePy3d(cano_verts, cano_faces, cano_norms,
-                                          outer_loop=2, inner_loop=50, method='uvd').to(self.device)
+        self.phongsurf = PhongSurfacePy3d(
+            cano_verts, cano_faces, cano_norms,
+            outer_loop=2, inner_loop=50, method='uvd'
+        ).to(self.device)
 
         self.mesh_verts = self.cano_verts
         self.mesh_norms = self.cano_norms
@@ -191,8 +195,10 @@ class SplattingAvatar(nn.Module):
         expression = input["expression"]
         bs = flame_pose.shape[0]    # 1, essentially
 
-        verts, _, _ = self.flame.forward(expression_params      = expression,
-                                        full_pose               = flame_pose)
+        verts, _, _ = self.flame.forward(
+            expression_params      = expression,
+            full_pose               = flame_pose
+        )
         
         cur_flame_mesh = self.mesh_py3d.update_padded(verts)
         cur_mesh = {}
@@ -215,12 +221,16 @@ class SplattingAvatar(nn.Module):
         visibility_filter = []
         radii = []
 
-        base_xyz = retrieve_verts_barycentric(self.mesh_verts, self.cano_faces,
-                                              self.sample_fidxs, self.sample_bary)
+        base_xyz = retrieve_verts_barycentric(
+            self.mesh_verts, self.cano_faces,
+            self.sample_fidxs, self.sample_bary
+        )
         
-        base_normal = F.normalize(retrieve_verts_barycentric(self.mesh_norms, self.cano_faces, 
-                                                        self.sample_fidxs, self.sample_bary), 
-                                                        dim=-1)
+        base_normal = F.normalize(retrieve_verts_barycentric(
+            self.mesh_norms, self.cano_faces, 
+            self.sample_fidxs, self.sample_bary), 
+            dim=-1
+        )
         
         base_quat = torch.einsum('bij,bi->bj', self.tri_quats[self.sample_fidxs], self.sample_bary)
 
@@ -236,12 +246,12 @@ class SplattingAvatar(nn.Module):
             gaussian._xyz           = base_xyz + base_normal * self._uvd[..., -1:]
 
             render_out = render(
-                                camera,
-                                gaussian,
-                                self.bg_color.to(self.device),
-                                device=self.device,
-                                override_color=None
-                            )
+                camera,
+                gaussian,
+                self.bg_color.to(self.device),
+                device=self.device,
+                override_color=None
+            )
             
             render_image_ = render_out['render']
             viewspace_points_ = render_out['viewspace_points']
@@ -286,8 +296,10 @@ class SplattingAvatar(nn.Module):
         expression = input["expression"]
         bs = flame_pose.shape[0]    # 1, essentially
 
-        verts, _, _ = self.flame.forward(expression_params      = expression,
-                                        full_pose               = flame_pose)
+        verts, _, _ = self.flame.forward(
+            expression_params      = expression,
+            full_pose               = flame_pose
+        )
         
         cur_flame_mesh = self.mesh_py3d.update_padded(verts)
         cur_mesh = {}
@@ -310,12 +322,16 @@ class SplattingAvatar(nn.Module):
         visibility_filter = []
         radii = []
 
-        base_xyz = retrieve_verts_barycentric(self.mesh_verts, self.cano_faces,
-                                              self.sample_fidxs, self.sample_bary)
+        base_xyz = retrieve_verts_barycentric(
+            self.mesh_verts, self.cano_faces,
+            self.sample_fidxs, self.sample_bary
+        )
         
-        base_normal = F.normalize(retrieve_verts_barycentric(self.mesh_norms, self.cano_faces, 
-                                                        self.sample_fidxs, self.sample_bary), 
-                                                        dim=-1)
+        base_normal = F.normalize(retrieve_verts_barycentric(
+            self.mesh_norms, self.cano_faces, 
+            self.sample_fidxs, self.sample_bary), 
+            dim=-1
+        )
         
         base_quat = torch.einsum('bij,bi->bj', self.tri_quats[self.sample_fidxs], self.sample_bary)
 
@@ -331,12 +347,12 @@ class SplattingAvatar(nn.Module):
             gaussian._xyz           = base_xyz + base_normal * self._uvd[..., -1:]
 
             render_out = render(
-                                camera,
-                                gaussian,
-                                self.bg_color.to(self.device),
-                                device=self.device,
-                                override_color=None
-                            )
+                camera,
+                gaussian,
+                self.bg_color.to(self.device),
+                device=self.device,
+                override_color=None
+            )
             
             render_image_ = render_out['render']
             viewspace_points_ = render_out['viewspace_points']
@@ -471,12 +487,17 @@ class SplattingAvatar(nn.Module):
         samples = torch.normal(mean=means, std=stds)
         rots    = build_rotation(torch.nn.functional.normalize(self._rotation[selected_pts_mask])).repeat(N, 1, 1)
 
-        base_xyz = retrieve_verts_barycentric(self.mesh_verts, self.cano_faces, 
-                                          self.sample_fidxs, self.sample_bary)
+        base_xyz = retrieve_verts_barycentric(
+            self.mesh_verts, self.cano_faces, 
+            self.sample_fidxs, self.sample_bary
+        )
 
-        base_normal_cano = torch.nn.functional.normalize(retrieve_verts_barycentric(self.cano_norms, self.cano_faces, 
-                                                        self.sample_fidxs, self.sample_bary),
-                                                        dim=-1)
+        base_normal_cano = torch.nn.functional.normalize(
+            retrieve_verts_barycentric(
+                self.cano_norms, self.cano_faces, 
+                self.sample_fidxs, self.sample_bary),
+            dim=-1
+        )
 
         xyz_cano   = base_xyz + base_normal_cano * self._uvd[..., -1:]
         

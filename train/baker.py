@@ -455,13 +455,13 @@ class UVBaker(Trainer):
 
         state['model'] = baked_avatar.state_dict()
 
-        state['train_expression'] = self.train_expression.state_dict()
-        state['train_flame_pose'] = self.train_flame_pose.state_dict()
-        state['train_cam_pose']   = self.train_cam_pose.state_dict()
+        # state['train_expression'] = self.train_expression.state_dict()
+        # state['train_flame_pose'] = self.train_flame_pose.state_dict()
+        # state['train_cam_pose']   = self.train_cam_pose.state_dict()
 
-        state['test_expression']  = self.test_expression.state_dict()
-        state['test_flame_pose']  = self.test_flame_pose.state_dict()
-        state['test_cam_pose']    = self.test_cam_pose.state_dict()
+        # state['test_expression']  = self.test_expression.state_dict()
+        # state['test_flame_pose']  = self.test_flame_pose.state_dict()
+        # state['test_cam_pose']    = self.test_cam_pose.state_dict()
 
         file_base = os.path.join(self.media_save_path["checkpoints_baked"]["folder"], name)
         os.makedirs(os.path.dirname(file_base), exist_ok=True)

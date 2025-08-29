@@ -235,10 +235,15 @@ We also provide a script for cross-reenactment:
 python avatar_reenact.py \
     --config <CONFIG_PATH> \
     --model_name <MODEL_NAME> \
+    --root_path <ROOT_PATH>
     --dst_path <DATASET_PATH> \
     --workspace <EXP_DIR> \
     --name <EXP_NAME> \
 ```
+
+- `--root_path`:
+  
+  Path to the source head avatar dataset.
 
 - `--dst_path`:
 

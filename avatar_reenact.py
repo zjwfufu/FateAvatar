@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',     type=str,                       required=True)
     parser.add_argument('--model_name', choices=ModelCallbacks.keys(),  required=True)
+    parser.add_argument('--root_path',  type=str,                       required=True)
     parser.add_argument('--dst_path',   type=str,                       required=True)
     parser.add_argument('--workspace',  type=str,                       required=True)
     parser.add_argument('--name',       type=str,                       required=True)
@@ -39,7 +40,8 @@ if __name__ == "__main__":
         overrides={
             "name":         opt.name,
             "workspace":    opt.workspace,
-            "bg_color":     opt.bg_color
+            "bg_color":     opt.bg_color,
+            "dst_path":     opt.dst_path,
             }
         )
 
